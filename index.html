@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Interactive Campus Map</title>
+  <title>Interactive Arts & Ideas Map</title>
   <style>
     body {
       font-family: sans-serif;
@@ -38,7 +38,7 @@
       transform: translate(-50%, -50%);
     }
 
-    /* The note bubble */
+    /* Popup note */
     .note {
       position: absolute;
       min-width: 220px;
@@ -69,29 +69,43 @@
       cursor: pointer;
       font-size: 14px;
     }
+
+    .note img {
+      margin-top: 8px;
+      max-width: 100%;
+      height: auto;
+      display: none; /* only shown if the pin has an image */
+      border-radius: 4px;
+    }
   </style>
 </head>
 <body>
   <div class="map-wrapper">
-    <!-- your image in the repo -->
-    <img src="map.jpg" alt="Campus Map" />
+    <!-- IMPORTANT: this name must match exactly your file in the repo -->
+    <img src="Arts and Ideas Map.jpg" alt="Arts and Ideas Map" />
 
-    <!-- EXAMPLE pins – move and edit these -->
-    <div class="pin" style="top: 55%; left: 32%;"
-         data-title="McCarter Theatre"
-         data-text="Main performance hall for Arts & Ideas events.">
+    <!-- EXAMPLE PIN 1 (with image) -->
+    <div class="pin"
+         style="top: 55%; left: 32%;"
+         data-title="Location One"
+         data-text="Short description for the first place."
+         data-img="image1.jpg">
     </div>
 
-    <div class="pin" style="top: 38%; left: 60%;"
-         data-title="Engineering Area"
-         data-text="Example note: description of an event or location.">
+    <!-- EXAMPLE PIN 2 (with image) -->
+    <div class="pin"
+         style="top: 68%; left: 40%;"
+         data-title="Location Two"
+         data-text="Short description for the second place."
+         data-img="image2.jpg">
     </div>
 
-    <!-- Reusable note bubble -->
+    <!-- Reusable popup -->
     <div class="note" id="note">
       <span class="close" id="note-close">&times;</span>
       <h2 id="note-title"></h2>
       <p id="note-text"></p>
+      <img id="note-image" alt="">
     </div>
   </div>
 
@@ -100,6 +114,7 @@
     const note = document.getElementById('note');
     const noteTitle = document.getElementById('note-title');
     const noteText = document.getElementById('note-text');
+    const noteImage = document.getElementById('note-image');
     const noteClose = document.getElementById('note-close');
 
     pins.forEach(pin => {
@@ -107,9 +122,20 @@
         const rect = pin.getBoundingClientRect();
         const parentRect = pin.parentElement.getBoundingClientRect();
 
-        noteTitle.textContent = pin.dataset.title;
-        noteText.textContent = pin.dataset.text;
+        // Set title + text
+        noteTitle.textContent = pin.dataset.title || '';
+        noteText.textContent = pin.dataset.text || '';
 
+        // Set image (if present on this pin)
+        const imgFile = pin.dataset.img;
+        if (imgFile) {
+          noteImage.src = imgFile;
+          noteImage.style.display = 'block';
+        } else {
+          noteImage.style.display = 'none';
+        }
+
+        // Position popup near the pin
         const top = ((rect.top - parentRect.top) / parentRect.height) * 100;
         const left = ((rect.left - parentRect.left) / parentRect.width) * 100;
 
@@ -123,6 +149,7 @@
       note.style.display = 'none';
     });
 
+    // Hide popup if clicking outside
     document.addEventListener('click', (e) => {
       if (!note.contains(e.target) && !e.target.classList.contains('pin')) {
         note.style.display = 'none';
