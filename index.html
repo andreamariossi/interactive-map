@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Interactive Campus Map</title>
   <style>
     body {
@@ -26,7 +26,7 @@
       display: block;
     }
 
-    /* Clickable pins */
+    /* Clickable spots */
     .pin {
       position: absolute;
       width: 18px;
@@ -38,7 +38,7 @@
       transform: translate(-50%, -50%);
     }
 
-    /* Note popup */
+    /* The note bubble */
     .note {
       position: absolute;
       min-width: 220px;
@@ -73,21 +73,21 @@
 </head>
 <body>
   <div class="map-wrapper">
-    <!-- Your map image -->
-    <img src="arts-and-ideas-map.jpg" alt="Campus Map">
+    <!-- your image in the repo -->
+    <img src="map.jpg" alt="Campus Map" />
 
-    <!-- Example pins (top/left in %) -->
-    <div class="pin" style="top: 50%; left: 40%;"
+    <!-- EXAMPLE pins – move and edit these -->
+    <div class="pin" style="top: 55%; left: 32%;"
          data-title="McCarter Theatre"
-         data-text="Main performance hall. Click here in real life to see the latest shows.">
+         data-text="Main performance hall for Arts & Ideas events.">
     </div>
 
-    <div class="pin" style="top: 30%; left: 70%;"
-         data-title="Engineering Quad"
-         data-text="Home of many engineering departments and labs.">
+    <div class="pin" style="top: 38%; left: 60%;"
+         data-title="Engineering Area"
+         data-text="Example note: description of an event or location.">
     </div>
 
-    <!-- Popup note (reused for all pins) -->
+    <!-- Reusable note bubble -->
     <div class="note" id="note">
       <span class="close" id="note-close">&times;</span>
       <h2 id="note-title"></h2>
@@ -107,11 +107,9 @@
         const rect = pin.getBoundingClientRect();
         const parentRect = pin.parentElement.getBoundingClientRect();
 
-        // Set note contents
         noteTitle.textContent = pin.dataset.title;
         noteText.textContent = pin.dataset.text;
 
-        // Position note near the pin
         const top = ((rect.top - parentRect.top) / parentRect.height) * 100;
         const left = ((rect.left - parentRect.left) / parentRect.width) * 100;
 
@@ -125,7 +123,6 @@
       note.style.display = 'none';
     });
 
-    // Optional: hide note when clicking outside
     document.addEventListener('click', (e) => {
       if (!note.contains(e.target) && !e.target.classList.contains('pin')) {
         note.style.display = 'none';
