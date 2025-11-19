@@ -76,6 +76,24 @@
       display: none; /* only shown when a pin has an image */
       border-radius: 4px;
     }
+
+        .overlay {
+      position: fixed;
+      inset: 0;               /* top:0; right:0; bottom:0; left:0 */
+      background: rgba(0, 0, 0, 0.8);
+      display: none;          /* hidden by default */
+      justify-content: center;
+      align-items: center;
+      z-index: 100;           /* above everything */
+    }
+
+    .overlay img {
+      max-width: 90%;
+      max-height: 90%;
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.7);
+    }
+
   </style>
 </head>
 <body>
@@ -114,15 +132,19 @@
      data-img="orchestra-detail.jpg">
     </div>
 
-
-    <!-- Reusable popup -->
+      <!-- Reusable popup -->
     <div class="note" id="note">
       <span class="close" id="note-close">&times;</span>
       <h2 id="note-title"></h2>
       <p id="note-text"></p>
       <img id="note-image" alt="">
     </div>
-  </div>
+
+    <!-- Fullscreen image overlay -->
+    <div class="overlay" id="image-overlay">
+      <img id="overlay-image" alt="">
+    </div>
+
 
   <script>
     const pins = document.querySelectorAll('.pin');
@@ -131,6 +153,10 @@
     const noteText = document.getElementById('note-text');
     const noteImage = document.getElementById('note-image');
     const noteClose = document.getElementById('note-close');
+
+    const overlay = document.getElementById('image-overlay');
+    const overlayImage = document.getElementById('overlay-image');
+
 
     pins.forEach(pin => {
       pin.addEventListener('click', () => {
@@ -169,6 +195,18 @@
       if (!note.contains(e.target) && !e.target.classList.contains('pin')) {
         note.style.display = 'none';
       }
+    });
+
+    // When you click the small image in the note, show it big
+    noteImage.addEventListener('click', () => {
+      if (!noteImage.src) return;
+      overlayImage.src = noteImage.src;
+      overlay.style.display = 'flex';
+    });
+
+    // Click anywhere on the dark overlay to close it
+    overlay.addEventListener('click', () => {
+      overlay.style.display = 'none';
     });
   </script>
 </body>
