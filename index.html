@@ -75,9 +75,12 @@
       height: auto;
       display: none; /* only shown when a pin has an image */
       border-radius: 4px;
+      margin-top: 8px;
+      cursor: pointer; /* hint that it's clickable */
     }
 
-        .overlay {
+    /* Fullscreen overlay for focusing on image */
+    .overlay {
       position: fixed;
       inset: 0;               /* top:0; right:0; bottom:0; left:0 */
       background: rgba(0, 0, 0, 0.8);
@@ -117,22 +120,14 @@
          data-img="forbes-detail.jpg">
     </div>
 
-    <!-- FORBES pin -->
+    <!-- EXTRA pin with text only -->
     <div class="pin"
-     style="top: 35%; left: 20%;"
-     data-title="orica ectra pirn"
-     data-text="ciaoooo.">
+         style="top: 35%; left: 20%;"
+         data-title="Orica Extra Pin"
+         data-text="ciaoooo.">
     </div>
 
-    <!-- EXTRA pin -->
-    <div class="pin"
-     style="top: 35%; left: 20%;"
-     data-title="Orchestra Extra Pin"
-     data-text="ciaoooo."
-     data-img="orchestra-detail.jpg">
-    </div>
-
-      <!-- Reusable popup -->
+    <!-- Reusable popup -->
     <div class="note" id="note">
       <span class="close" id="note-close">&times;</span>
       <h2 id="note-title"></h2>
@@ -144,7 +139,7 @@
     <div class="overlay" id="image-overlay">
       <img id="overlay-image" alt="">
     </div>
-
+  </div> <!-- closes .map-wrapper -->
 
   <script>
     const pins = document.querySelectorAll('.pin');
@@ -156,7 +151,6 @@
 
     const overlay = document.getElementById('image-overlay');
     const overlayImage = document.getElementById('overlay-image');
-
 
     pins.forEach(pin => {
       pin.addEventListener('click', () => {
@@ -174,6 +168,7 @@
           noteImage.style.display = 'block';
         } else {
           noteImage.style.display = 'none';
+          noteImage.src = '';
         }
 
         // Position popup near the pin
