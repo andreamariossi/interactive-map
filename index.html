@@ -41,8 +41,8 @@
     /* Popup note */
     .note {
       position: absolute;
-      min-width: 220px;
-      max-width: 280px;
+      min-width: 260px;
+      max-width: 320px;
       background: #ffffff;
       border-radius: 8px;
       padding: 10px 12px;
@@ -57,7 +57,7 @@
     }
 
     .note p {
-      margin: 0;
+      margin: 0 0 8px;
       font-size: 12px;
       line-height: 1.4;
     }
@@ -71,33 +71,32 @@
     }
 
     .note img {
-      margin-top: 8px;
       max-width: 100%;
       height: auto;
-      display: none; /* only shown if the pin has an image */
+      display: none; /* only shown when a pin has an image */
       border-radius: 4px;
     }
   </style>
 </head>
 <body>
   <div class="map-wrapper">
-    <!-- IMPORTANT: this name must match exactly your file in the repo -->
-    <img src="map.jpg" alt="map" />
+    <!-- MAIN MAP IMAGE – matches your file name -->
+    <img src="map.jpg" alt="Arts and Ideas Map" />
 
-    <!-- EXAMPLE PIN 1 (with image) -->
+    <!-- MCCARTER pin -->
     <div class="pin"
-         style="top: 55%; left: 32%;"
-         data-title="Location One"
-         data-text="Short description for the first place."
-         data-img="image1.jpg">
+         style="top: 50%; left: 45%;"
+         data-title="McCarter Theatre"
+         data-text="Main performance hall for Arts & Ideas events."
+         data-img="mccarter-detail.jpg">
     </div>
 
-    <!-- EXAMPLE PIN 2 (with image) -->
+    <!-- FORBES pin -->
     <div class="pin"
-         style="top: 68%; left: 40%;"
-         data-title="Location Two"
-         data-text="Short description for the second place."
-         data-img="image2.jpg">
+         style="top: 65%; left: 40%;"
+         data-title="Forbes College"
+         data-text="Residential college close to the arts complex."
+         data-img="forbes-detail.jpg">
     </div>
 
     <!-- Reusable popup -->
@@ -122,11 +121,11 @@
         const rect = pin.getBoundingClientRect();
         const parentRect = pin.parentElement.getBoundingClientRect();
 
-        // Set title + text
+        // Set text
         noteTitle.textContent = pin.dataset.title || '';
         noteText.textContent = pin.dataset.text || '';
 
-        // Set image (if present on this pin)
+        // Set image if this pin has one
         const imgFile = pin.dataset.img;
         if (imgFile) {
           noteImage.src = imgFile;
@@ -149,7 +148,7 @@
       note.style.display = 'none';
     });
 
-    // Hide popup if clicking outside
+    // Hide popup when clicking outside
     document.addEventListener('click', (e) => {
       if (!note.contains(e.target) && !e.target.classList.contains('pin')) {
         note.style.display = 'none';
