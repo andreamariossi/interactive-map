@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Interactive Campus Map</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: #222;
+    }
+
+    .map-wrapper {
+      position: relative;
+      max-width: 1200px;
+      width: 95%;
+    }
+
+    .map-wrapper img {
+      width: 100%;
+      display: block;
+    }
+
+    /* Clickable pins */
+    .pin {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      background: #007bff;
+      cursor: pointer;
+      transform: translate(-50%, -50%);
+    }
+
+    /* Note popup */
+    .note {
+      position: absolute;
+      min-width: 220px;
+      max-width: 280px;
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 10px 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      display: none;
+      z-index: 10;
+    }
+
+    .note h2 {
+      margin: 0 0 4px;
+      font-size: 14px;
+    }
+
+    .note p {
+      margin: 0;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .note .close {
+      position: absolute;
+      top: 4px;
+      right: 8px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="map-wrapper">
+    <!-- Your map image -->
+    <img src="arts-and-ideas-map.jpg" alt="Campus Map">
+
+    <!-- Example pins (top/left in %) -->
+    <div class="pin" style="top: 50%; left: 40%;"
+         data-title="McCarter Theatre"
+         data-text="Main performance hall. Click here in real life to see the latest shows.">
+    </div>
+
+    <div class="pin" style="top: 30%; left: 70%;"
+         data-title="Engineering Quad"
+         data-text="Home of many engineering departments and labs.">
+    </div>
+
+    <!-- Popup note (reused for all pins) -->
+    <div class="note" id="note">
+      <span class="close" id="note-close">&times;</span>
+      <h2 id="note-title"></h2>
+      <p id="note-text"></p>
+    </div>
+  </div>
+
+  <script>
+    const pins = document.querySelectorAll('.pin');
+    const note = document.getElementById('note');
+    const noteTitle = document.getElementById('note-title');
+    const noteText = document.getElementById('note-text');
+    const noteClose = document.getElementById('note-close');
+
+    pins.forEach(pin => {
+      pin.addEventListener('click', () => {
+        const rect = pin.getBoundingClientRect();
+        const parentRect = pin.parentElement.getBoundingClientRect();
+
+        // Set note contents
+        noteTitle.textContent = pin.dataset.title;
+        noteText.textContent = pin.dataset.text;
+
+        // Position note near the pin
+        const top = ((rect.top - parentRect.top) / parentRect.height) * 100;
+        const left = ((rect.left - parentRect.left) / parentRect.width) * 100;
+
+        note.style.top = `calc(${top}% - 10px)`;
+        note.style.left = `calc(${left}% + 20px)`;
+        note.style.display = 'block';
+      });
+    });
+
+    noteClose.addEventListener('click', () => {
+      note.style.display = 'none';
+    });
+
+    // Optional: hide note when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!note.contains(e.target) && !e.target.classList.contains('pin')) {
+        note.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
