@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Interactive Arts & Ideas Map</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: #222;
+    }
+
+    .map-wrapper {
+      position: relative;
+      max-width: 1200px;
+      width: 95%;
+    }
+
+    .map-wrapper img {
+      width: 100%;
+      display: block;
+    }
+
+    /* Clickable spots */
+    .pin {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      background: #007bff;
+      cursor: pointer;
+      transform: translate(-50%, -50%);
+    }
+
+    /* Popup note */
+    .note {
+      position: absolute;
+      min-width: 260px;
+      max-width: 480px;
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 10px 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      display: none;
+      z-index: 10;
+    }
+
+    .note h2 {
+      margin: 0 0 4px;
+      font-size: 14px;
+    }
+
+    .note p {
+      margin: 0 0 8px;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .note .close {
+      position: absolute;
+      top: 4px;
+      right: 8px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    /* Media inside popup (image + iframe for video) */
+    .note img,
+    .note iframe {
+      max-width: 100%;
+      display: none; /* only shown when needed */
+      border-radius: 4px;
+      margin-top: 8px;
+    }
+
+    .note img {
+      cursor: pointer; /* hint that it's clickable for fullscreen */
+      height: auto;
+    }
+
+    .note iframe {
+      aspect-ratio: 16 / 9;
+      width: 100%;
+    }
+
+    /* Fullscreen overlay for focusing on image */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .overlay img {
+      max-width: 90%;
+      max-height: 90%;
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.7);
+    }
+  </style>
+</head>
+<body>
+  <div class="map-wrapper">
+    <!-- MAIN MAP IMAGE – matches your file name -->
+    <img src="map.jpg" alt="Arts and Ideas Map" />
+
+    <!-- MCCARTER pin (image) -->
+    <div class="pin"
+         style="top: 50%; left: 45%;"
+         data-title="McCarter Theatre"
+         data-text="Main performance hall for Arts & Ideas events."
+         data-img="mccarter-detail.jpg">
+    </div>
+
+    <!-- FORBES pin (Google Drive VIDEO) -->
+    <div class="pin"
+         style="top: 65%; left: 40%;"
+         data-title="Forbes College"
+         data-text="Residential college close to the arts complex."
+         data-video="https://drive.google.com/file/d/1bbAWyeZ3d3JfzIIm-SgbON39Mz0xjG6Y/preview">
+    </div>
+
+    <!-- EXTRA pin with text only -->
+    <div class="pin"
+         style="top: 35%; left: 20%;"
+         data-title="Orica Extra Pin"
+         data-text="ciaoooo.">
+    </div>
+
+    <!-- Reusable popup -->
+    <div class="note" id="note">
+      <span class="close" id="note-close">&times;</span>
+      <h2 id="note-title"></h2>
+      <p id="note-text"></p>
+      <img id="note-image" alt="">
+      <iframe id="note-video" allow="autoplay" frameborder="0" allowfullscreen></iframe>
+    </div>
+
+    <!-- Fullscreen image overlay -->
+    <div class="overlay" id="image-overlay">
+      <img id="overlay-image" alt="">
+    </div>
+  </div> <!-- closes .map-wrapper -->
+
+  <script>
+    const pins = document.querySelectorAll('.pin');
+    const note = document.getElementById('note');
+    const noteTitle = document.getElementById('note-title');
+    const noteText = document.getElementById('note-text');
+    const noteImage = document.getElementById('note-image');
+    const noteVideo = document.getElementById('note-video');
+    const noteClose = document.getElementById('note-close');
+
+    const overlay = document.getElementById('image-overlay');
+    const overlayImage = document.getElementById('overlay-image');
+
+    pins.forEach(pin => {
+      pin.addEventListener('click', () => {
+        const rect = pin.getBoundingClientRect();
+        const parentRect = pin.parentElement.getBoundingClientRect();
+
+        // Set text
+        noteTitle.textContent = pin.dataset.title || '';
+        noteText.textContent = pin.dataset.text || '';
+
+        const videoUrl = pin.dataset.video;
+        const imgFile = pin.dataset.img;
+
+        // Decide what to show: video first, then image
+        if (videoUrl) {
+          // Show embedded video (Drive, YouTube, etc.)
+          noteVideo.src = videoUrl;
+          noteVideo.style.display = 'block';
+
+          // Hide image
+          noteImage.style.display = 'none';
+          noteImage.src = '';
+        } else if (imgFile) {
+          // Show image
+          noteImage.src = imgFile;
+          noteImage.style.display = 'block';
+
+          // Hide video
+          noteVideo.style.display = 'none';
+          noteVideo.src = '';
+        } else {
+          // No media
+          noteImage.style.display = 'none';
+          noteImage.src = '';
+          noteVideo.style.display = 'none';
+          noteVideo.src = '';
+        }
+
+        // Position popup near the pin
+        const top = ((rect.top - parentRect.top) / parentRect.height) * 100;
+        const left = ((rect.left - parentRect.left) / parentRect.width) * 100;
+
+        note.style.top = `calc(${top}% - 10px)`;
+        note.style.left = `calc(${left}% + 20px)`;
+        note.style.display = 'block';
+      });
+    });
+
+    noteClose.addEventListener('click', () => {
+      note.style.display = 'none';
+      noteVideo.src = ''; // stop Drive video
+    });
+
+    // Hide popup when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!note.contains(e.target) && !e.target.classList.contains('pin')) {
+        note.style.display = 'none';
+        noteVideo.src = ''; // stop Drive video
+      }
+    });
+
+    // When you click the small image in the note, show it big
+    noteImage.addEventListener('click', () => {
+      if (!noteImage.src) return;
+      overlayImage.src = noteImage.src;
+      overlay.style.display = 'flex';
+    });
+
+    // Click anywhere on the dark overlay to close it
+    overlay.addEventListener('click', () => {
+      overlay.style.display = 'none';
+      overlayImage.src = '';
+    });
+  </script>
+</body>
+</html>
